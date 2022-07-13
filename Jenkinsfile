@@ -8,16 +8,20 @@ pipeline {
                 archiveArtifacts artifacts: 'dist/trainSchedule.zip'
             }
         }
-        steps {
-            script {
-                app = docker.build("hgovea/train-schedule")
-                app.inside {
-                    sh 'echo $(curl localhost:8080)'
+        stage('Build Docker Image') {
+            when {
+                branch 'master'
+            }
+            steps {
+                script {
+                    app = docker.build("hgovea/train-schedule")
+                    app.inside {
+                        sh 'echo $(curl localhost:8080)'
+                    }
                 }
-             }
-         }
-       }
-       stage('Push Docker Image') {
+            }
+        }
+        stage('Push Docker Image') {
             when {
                 branch 'master'
             }
